@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfConsulta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Consulta>
+    <Id>1</Id>
+    <PacienteId>0</PacienteId>
+    <Paciente>
+      <Id>1</Id>
+      <Nome>Enzo</Nome>
+      <Email>temp@email.com</Email>
+      <Telefone>000000000</Telefone>
+    </Paciente>
+    <MedicoId>0</MedicoId>
+    <Medico>
+      <Id>2</Id>
+      <Nome>Dra. Ana Souza</Nome>
+      <Especialidade>Dermatologia</Especialidade>
+      <CRM>54321-SP</CRM>
+    </Medico>
+    <DataConsulta>2025-08-11T00:00:00</DataConsulta>
+    <HoraConsulta>PT15H</HoraConsulta>
+    <Realizada>false</Realizada>
+  </Consulta>
+</ArrayOfConsulta>

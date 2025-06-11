@@ -4,43 +4,55 @@ using System.Linq;
 using System.Threading.Tasks;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Models;
+using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services;
 
 namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 {
-      public class ServicoPaciente : IServicoPaciente
+    public class ServicoPaciente : IServicoPaciente
     {
         private readonly Queue<Paciente> _filaPacientes;
-        private readonly List<Paciente> _listaPacientes;
-        private readonly Paciente[] _vetorPacientes;
+        private const string ArquivoConsultas = "../../consultas.xml";
 
         public ServicoPaciente()
         {
             _filaPacientes = new Queue<Paciente>();
-            _listaPacientes = new List<Paciente>();
-            _vetorPacientes = new Paciente[100]; // Capacidade inicial
         }
 
         public void AdicionarPacienteNaFila(Paciente paciente)
         {
-            // Implementação aqui
+            // Adiciona paciente na fila, mas não salva em XML (apenas consultas salvarão pacientes)
+            _filaPacientes.Enqueue(paciente);
         }
 
         public Paciente ObterProximoPaciente()
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            if (_filaPacientes.Count > 0)
+                return _filaPacientes.Dequeue();
+            return null;
         }
 
         public List<Paciente> ListarPacientesOrdemAlfabetica()
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            // Lê todos os pacientes das consultas salvas
+            var consultas = XmlStorageHelper.CarregarLista<Consulta>(ArquivoConsultas);
+            return consultas
+                .Where(c => c.Paciente != null)
+                .Select(c => c.Paciente)
+                .GroupBy(p => p.Id)
+                .Select(g => g.First())
+                .OrderBy(p => p.Nome)
+                .ToList();
         }
 
         public Paciente[] ObterVetorPacientes()
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            var consultas = XmlStorageHelper.CarregarLista<Consulta>(ArquivoConsultas);
+            return consultas
+                .Where(c => c.Paciente != null)
+                .Select(c => c.Paciente)
+                .GroupBy(p => p.Id)
+                .Select(g => g.First())
+                .ToArray();
         }
     }
 }

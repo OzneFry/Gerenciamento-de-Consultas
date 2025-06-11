@@ -22,7 +22,7 @@ class Program
         bool executando = true;
         while (executando)
         {
-            Console.WriteLine("\nDigite o número da operação que deseja realizar:");
+            Console.WriteLine("Digite o número da operação que deseja realizar:");
             Console.WriteLine("==============================================");
             Console.WriteLine("1 - Agendar nova consulta");
             Console.WriteLine("2 - Listar todas as consultas agendadas");
@@ -50,7 +50,7 @@ class Program
                 switch (opcao)
                 {
                     case 1: // Agendar nova consulta
-                        Console.WriteLine("--- AGENDAR NOVA CONSULTA ---");
+                        Console.WriteLine("Digite o nome do paciente e os detalhes da consulta:");
 
                         try
                         {
@@ -66,7 +66,7 @@ class Program
                                 Telefone = "000000000",
                             };
                             // Simulação de busca de médicos disponíveis
-                            Console.WriteLine("\n--- SELECIONAR MÉDICO ---");
+                            Console.WriteLine("\nSelecione um médico para a consulta:");
                             var medicos = new List<Medico> // Lista de médicos fictícia
                             {
                                 new Medico

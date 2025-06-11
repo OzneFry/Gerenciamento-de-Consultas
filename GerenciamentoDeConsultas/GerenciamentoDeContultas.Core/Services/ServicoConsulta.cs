@@ -11,10 +11,11 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
     {
         private readonly List<Consulta> _listaConsultas;
         private readonly string[,] _matrizConsultas;
+        private const string ArquivoConsultas = "../../consultas.xml";
 
         public ServicoConsulta()
         {
-            _listaConsultas = new List<Consulta>();
+            _listaConsultas = XmlStorageHelper.CarregarLista<Consulta>(ArquivoConsultas);
             _matrizConsultas = new string[24, 7]; // 24 horas, 7 dias
         }
 
@@ -59,6 +60,9 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
                     $"Pac: {consulta.Paciente.Nome.Substring(0, Math.Min(10, consulta.Paciente.Nome.Length))} | "
                     + $"Méd: {consulta.Medico.Nome.Substring(0, Math.Min(10, consulta.Medico.Nome.Length))}";
             }
+
+            // Salvar no XML
+            XmlStorageHelper.SalvarLista(_listaConsultas, ArquivoConsultas);
 
             return true;
         }
