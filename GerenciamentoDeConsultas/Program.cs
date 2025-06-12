@@ -207,10 +207,6 @@ class Program
             if (opcao != 0)
             {
                 Console.WriteLine("\nPressione qualquer tecla para continuar...");
-                if (!Console.IsInputRedirected)
-                {
-                    Console.Clear();
-                }
                 Console.ReadLine();
             }
         }

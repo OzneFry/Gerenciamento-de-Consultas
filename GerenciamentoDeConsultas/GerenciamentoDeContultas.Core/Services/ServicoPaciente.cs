@@ -11,7 +11,7 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
     public class ServicoPaciente : IServicoPaciente
     {
         private readonly Queue<Paciente> _filaPacientes;
-        private const string ArquivoConsultas = "../../consultas.xml";
+        private const string ArquivoConsultas = "../../../Data/consultas.xml";
 
         public ServicoPaciente()
         {

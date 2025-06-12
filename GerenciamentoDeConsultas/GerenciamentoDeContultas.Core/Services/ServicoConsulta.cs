@@ -11,7 +11,7 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
     {
         private readonly List<Consulta> _listaConsultas;
         private readonly string[,] _matrizConsultas;
-        private const string ArquivoConsultas = "../../consultas.xml";
+        private const string ArquivoConsultas = "../../../Data/consultas.xml";
 
         public ServicoConsulta()
         {
