@@ -5,7 +5,7 @@
     <PacienteId>0</PacienteId>
     <Paciente>
       <Id>1</Id>
-      <Nome>Grazi</Nome>
+      <Nome>Enzo</Nome>
       <Email>temp@email.com</Email>
       <Telefone>000000000</Telefone>
     </Paciente>
@@ -16,8 +16,8 @@
       <Especialidade>Dermatologia</Especialidade>
       <CRM>54321-SP</CRM>
     </Medico>
-    <DataConsulta>2025-06-12T00:00:00</DataConsulta>
-    <HoraConsulta>PT16H</HoraConsulta>
+    <DataConsulta>2025-08-11T00:00:00</DataConsulta>
+    <HoraConsulta>PT15H</HoraConsulta>
     <Realizada>false</Realizada>
   </Consulta>
 </ArrayOfConsulta>
