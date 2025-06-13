@@ -13,6 +13,10 @@ class Program
 
     static void Main(string[] args)
     {
+        // Garante que o console use UTF-8 para entrada e saída
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.InputEncoding = System.Text.Encoding.UTF8;
+
         Console.WriteLine("\t--- SISTEMA DE GERENCIAMENTO DE CONSULTAS MÉDICAS (SGCM) ---");
         Console.WriteLine("\nIniciando o sistema...\n");
 
@@ -63,7 +67,12 @@ class Program
                         {
                             // Cadastro rápido do paciente
                             Console.Write("Nome completo do paciente: ");
-                            string nomePaciente = Console.ReadLine();
+                            string? nomePaciente = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(nomePaciente))
+                            {
+                                Console.WriteLine("Nome do paciente não pode ser vazio!");
+                                break;
+                            }
 
                             var paciente = new Paciente
                             {
@@ -202,23 +211,7 @@ class Program
 
                     case 2: // Listar todas as consultas
                         Console.WriteLine("--- TODAS AS CONSULTAS AGENDADAS ---");
-
-                        var consultas = gerenciador.ListarConsultas();
-
-                        foreach (var consulta in consultas)
-                        {
-                            // Verificando se algum valor está nulo ou com formato inválido
-                            if (consulta.Paciente == null || consulta.Medico == null)
-                            {
-                                Console.WriteLine("Erro ao listar consulta: dados inválidos.");
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    $"Paciente: {consulta.Paciente.Nome}, Médico: {consulta.Medico.Nome}, Data: {consulta.DataConsulta:dd/MM/yyyy}, Hora: {consulta.HoraConsulta:hh\\:mm}"
-                                );
-                            }
-                        }
+                        gerenciador.ListarConsultas();
                         break;
 
                     case 3: // Consultar por data
@@ -238,7 +231,12 @@ class Program
                     case 5: // Adicionar paciente à fila
                         Console.WriteLine("--- ADICIONAR PACIENTE À FILA ---");
                         Console.Write("Nome do paciente: ");
-                        string nome = Console.ReadLine();
+                        string? nome = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(nome))
+                        {
+                            Console.WriteLine("Nome do paciente não pode ser vazio!");
+                            break;
+                        }
                         // Implementar adição à fila
                         break;
 
@@ -317,7 +315,12 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            string entrada = Console.ReadLine();
+            string? entrada = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(entrada))
+            {
+                Console.WriteLine("Data não pode ser vazia!");
+                continue;
+            }
             if (
                 DateTime.TryParseExact(
                     entrada,
