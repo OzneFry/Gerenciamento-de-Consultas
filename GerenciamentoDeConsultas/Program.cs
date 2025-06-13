@@ -1,10 +1,16 @@
-﻿using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
+using GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services;
+using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Models;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 class Program
 {
+    // Criação da lista das consultas existentes
+    static List<Consulta> listaConsultas = new List<Consulta>();
+
     static void Main(string[] args)
     {
         Console.WriteLine("\t--- SISTEMA DE GERENCIAMENTO DE CONSULTAS MÉDICAS (SGCM) ---");
@@ -50,12 +56,13 @@ class Program
                 switch (opcao)
                 {
                     case 1: // Agendar nova consulta
+                        Console.WriteLine("--- AGENDE A CONSULTA ---\n");
                         Console.WriteLine("Digite o nome do paciente e os detalhes da consulta:");
 
                         try
                         {
-                            // Cadastro rápido do paciente (em um sistema real, teríamos um cadastro completo)
-                            Console.Write("Nome do paciente: ");
+                            // Cadastro rápido do paciente
+                            Console.Write("Nome completo do paciente: ");
                             string nomePaciente = Console.ReadLine();
 
                             var paciente = new Paciente
@@ -67,7 +74,7 @@ class Program
                             };
                             // Simulação de busca de médicos disponíveis
                             Console.WriteLine("\nSelecione um médico para a consulta:");
-                            var medicos = new List<Medico> // Lista de médicos fictícia
+                            var medicos = new List<Medico>
                             {
                                 new Medico
                                 {
@@ -86,7 +93,7 @@ class Program
                                 new Medico
                                 {
                                     Id = 3,
-                                    Nome = "Dr. Marcos Lima",
+                                    Nome = "Dr. Marcos Oliveira",
                                     Especialidade = "Ortopedia",
                                     CRM = "98765-SP",
                                 },
@@ -109,31 +116,82 @@ class Program
                                 break;
                             }
 
-                            DateTime dataConsulta = LerData("Data da consulta (dd/MM/yyyy): ");
-
-                            Console.Write("Hora da consulta (HH:mm): ");
+                            DateTime dataConsulta1;
                             TimeSpan horaConsulta;
-                            while (!TimeSpan.TryParse(Console.ReadLine(), out horaConsulta))
+                            bool agendamentoConcluido = false;
+                            while (!agendamentoConcluido)
                             {
-                                Console.WriteLine("Formato inválido! Digite no formato HH:mm");
-                                Console.Write("Hora da consulta (HH:mm): ");
-                            }
+                                // Solicita data
+                                dataConsulta1 = LerData("Data da consulta (dd/MM/yyyy): ");
 
-                            bool sucesso = gerenciador.AgendarNovaConsulta(
-                                paciente,
-                                medicoSelecionado,
-                                dataConsulta,
-                                horaConsulta
-                            );
+                                // Solicita hora e verifica disponibilidade
+                                bool horarioDisponivel = false;
+                                do
+                                {
+                                    Console.Write("Hora da consulta (HH:mm): ");
+                                    while (!TimeSpan.TryParse(Console.ReadLine(), out horaConsulta))
+                                    {
+                                        Console.WriteLine(
+                                            "Formato inválido! Digite no formato HH:mm"
+                                        );
+                                        Console.Write("Hora da consulta (HH:mm): ");
+                                    }
 
-                            if (sucesso)
-                            {
-                                Console.WriteLine("\nConsulta agendada com sucesso!");
-                                Console.WriteLine($"Paciente: {paciente.Nome}");
-                                Console.WriteLine($"Médico: {medicoSelecionado.Nome}");
-                                Console.WriteLine(
-                                    $"Data: {dataConsulta:dd/MM/yyyy} às {horaConsulta:hh\\:mm}"
-                                );
+                                    var consultasNoMesmoHorario = gerenciador
+                                        .ListarConsultas()
+                                        .Where(c =>
+                                            c.Medico != null
+                                            && c.DataConsulta.Date == dataConsulta1.Date
+                                        )
+                                        .Any(c =>
+                                            c.Medico.Id == medicoSelecionado.Id
+                                            && c.HoraConsulta == horaConsulta
+                                        );
+
+                                    if (consultasNoMesmoHorario)
+                                    {
+                                        Console.WriteLine(
+                                            "Este médico já possui uma consulta nesse horário. Escolha outro horário!"
+                                        );
+                                    }
+                                    else
+                                    {
+                                        horarioDisponivel = true;
+                                    }
+                                } while (!horarioDisponivel);
+
+                                try
+                                {
+                                    bool sucesso = gerenciador.AgendarNovaConsulta(
+                                        paciente,
+                                        medicoSelecionado,
+                                        dataConsulta1,
+                                        horaConsulta
+                                    );
+                                    if (sucesso)
+                                    {
+                                        Console.WriteLine("\nConsulta agendada com sucesso!");
+                                        Console.WriteLine($"Paciente: {paciente.Nome}");
+                                        Console.WriteLine($"Médico: {medicoSelecionado.Nome}");
+                                        Console.WriteLine(
+                                            $"Data: {dataConsulta1:dd/MM/yyyy} às {horaConsulta:hh\\:mm}"
+                                        );
+                                        agendamentoConcluido = true;
+                                    }
+                                }
+                                catch (ArgumentException ex)
+                                    when (ex.Message.Contains("datas passadas"))
+                                {
+                                    Console.WriteLine(
+                                        "Não é possível agendar consultas para datas passadas. Escolha uma nova data!"
+                                    );
+                                    // Repete o loop para pedir nova data
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"\nErro ao agendar consulta: {ex.Message}");
+                                    break;
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -144,13 +202,32 @@ class Program
 
                     case 2: // Listar todas as consultas
                         Console.WriteLine("--- TODAS AS CONSULTAS AGENDADAS ---");
-                        // Implementar listagem
+
+                        var consultas = gerenciador.ListarConsultas();
+
+                        foreach (var consulta in consultas)
+                        {
+                            // Verificando se algum valor está nulo ou com formato inválido
+                            if (consulta.Paciente == null || consulta.Medico == null)
+                            {
+                                Console.WriteLine("Erro ao listar consulta: dados inválidos.");
+                            }
+                            else
+                            {
+                                Console.WriteLine(
+                                    $"Paciente: {consulta.Paciente.Nome}, Médico: {consulta.Medico.Nome}, Data: {consulta.DataConsulta:dd/MM/yyyy}, Hora: {consulta.HoraConsulta:hh\\:mm}"
+                                );
+                            }
+                        }
                         break;
 
                     case 3: // Consultar por data
                         Console.WriteLine("--- CONSULTAS POR DATA ---");
-                        Console.Write("Digite a data (dd/MM/yyyy): ");
-                        // Implementar busca por data
+                        DateTime dataConsulta2 = LerData(
+                            "Digite a data da consulta (dd/MM/yyyy): "
+                        );
+
+                        gerenciador.ObterConsultasPorData(dataConsulta2);
                         break;
 
                     case 4: // Consultar por médico
@@ -206,11 +283,7 @@ class Program
 
             if (opcao != 0)
             {
-                Console.WriteLine("\nPressione qualquer tecla para continuar...");
-                if (!Console.IsInputRedirected)
-                {
-                    Console.Clear();
-                }
+                Console.WriteLine("\nPressione qualquer tecla para retornar ao menu principal...");
                 Console.ReadLine();
             }
         }
@@ -224,7 +297,15 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            if (TimeSpan.TryParse(Console.ReadLine(), out hora))
+            if (
+                TimeSpan.TryParseExact(
+                    Console.ReadLine(),
+                    "hh\\:mm",
+                    CultureInfo.InvariantCulture,
+                    TimeSpanStyles.None,
+                    out hora
+                )
+            )
                 return hora;
             Console.WriteLine("Formato inválido! Use HH:mm");
         }
@@ -236,7 +317,16 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            if (DateTime.TryParse(Console.ReadLine(), out data))
+            string entrada = Console.ReadLine();
+            if (
+                DateTime.TryParseExact(
+                    entrada,
+                    "dd/MM/yyyy",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out data
+                )
+            )
                 return data;
             Console.WriteLine("Data inválida! Formato esperado: dd/MM/yyyy");
         }

@@ -8,7 +8,7 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces
 {
     public interface IServicoPaciente
     {
-         void AdicionarPacienteNaFila(Paciente paciente);
+        void AdicionarPacienteNaFila(Paciente paciente);
         Paciente ObterProximoPaciente();
         List<Paciente> ListarPacientesOrdemAlfabetica();
         Paciente[] ObterVetorPacientes();

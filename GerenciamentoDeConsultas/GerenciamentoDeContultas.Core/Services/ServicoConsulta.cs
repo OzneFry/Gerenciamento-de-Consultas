@@ -11,7 +11,7 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
     {
         private readonly List<Consulta> _listaConsultas;
         private readonly string[,] _matrizConsultas;
-        private const string ArquivoConsultas = "../../consultas.xml";
+        private const string ArquivoConsultas = "../../../Data/consultas.xml";
 
         public ServicoConsulta()
         {
@@ -47,33 +47,115 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
             // Atribuir ID (simulação - em produção usar banco de dados)
             consulta.Id = _listaConsultas.Count > 0 ? _listaConsultas.Max(c => c.Id) + 1 : 1;
 
-            // Adicionar na lista
-            _listaConsultas.Add(consulta);
-
-            // Atualizar matriz de consultas
-            int hora = consulta.HoraConsulta.Hours;
-            int diaSemana = (int)consulta.DataConsulta.DayOfWeek;
-
-            if (hora >= 0 && hora < 24 && diaSemana >= 0 && diaSemana < 7)
+            // Ajuste para garantir que a hora esteja no formato correto
+            if (consulta.HoraConsulta == null)
             {
-                _matrizConsultas[hora, diaSemana] =
-                    $"Pac: {consulta.Paciente.Nome.Substring(0, Math.Min(10, consulta.Paciente.Nome.Length))} | "
-                    + $"Méd: {consulta.Medico.Nome.Substring(0, Math.Min(10, consulta.Medico.Nome.Length))}";
+                throw new ArgumentException("Hora da consulta não pode ser nula");
+            }
+            else
+            {
+                // Garantir que a hora esteja no formato HH:mm (por exemplo, 14:00)
+                TimeSpan hora;
+                string horaString = consulta.HoraConsulta.ToString();
+                if (!TimeSpan.TryParse(horaString, out hora))
+                {
+                    throw new ArgumentException(
+                        "Hora da consulta está em formato inválido. Utilize o formato HH:mm."
+                    );
+                }
+
+                consulta.HoraConsulta = hora;
             }
 
-            // Salvar no XML
-            XmlStorageHelper.SalvarLista(_listaConsultas, ArquivoConsultas);
+            // Adicionar consulta à lista de consultas
+            _listaConsultas.Add(consulta);
+
+            try
+            {
+                // Salvar no XML
+                XmlStorageHelper.SalvarLista(_listaConsultas, ArquivoConsultas);
+            }
+            catch (Exception ex)
+            {
+                // Tratar erro ao salvar o arquivo XML
+                Console.WriteLine($"Erro ao salvar consultas: {ex.Message}");
+                return false;
+            }
 
             return true;
         }
 
-        public bool CancelarConsulta(int consultaId)
+        public List<Consulta> ListarConsultas()
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            if (_listaConsultas == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(_listaConsultas),
+                    "A lista de consultas não foi inicializada."
+                );
+            }
+
+            // Se não houver consultas, apenas retorne uma lista vazia
+            if (_listaConsultas.Count == 0)
+            {
+                return new List<Consulta>();
+            }
+
+            List<Consulta> consultasValidas = new List<Consulta>();
+
+            foreach (var consulta in _listaConsultas)
+            {
+                // Verifique os dados da consulta, especialmente valores como hora ou data
+                if (consulta.Paciente == null || consulta.Medico == null)
+                {
+                    Console.WriteLine("Consulta com dados inválidos ignorada.");
+                }
+                else
+                {
+                    // Adicionar apenas as consultas válidas (com dados completos)
+                    consultasValidas.Add(consulta);
+
+                    // Exibir somente as informações desejadas (Paciente, Médico, Data)
+                    Console.WriteLine("Informações da consulta agendada:");
+                    Console.WriteLine($"Paciente: {consulta.Paciente.Nome}");
+                    Console.WriteLine($"Médico: {consulta.Medico.Nome}");
+                    Console.WriteLine($"Data: {consulta.DataConsulta:dd/MM/yyyy}");
+                    Console.WriteLine("---------------------------------");
+                }
+            }
+
+            return consultasValidas;
         }
 
         public List<Consulta> ObterConsultasPorData(DateTime data)
+        {
+            // Filtra as consultas pela data
+            var consultasDoDia = _listaConsultas
+                .Where(c => c.DataConsulta.Date == data.Date)
+                .ToList();
+
+            if (consultasDoDia.Count == 0)
+            {
+                Console.WriteLine("\nNão há consultas agendadas para esta data.");
+            }
+            else
+            {
+                Console.WriteLine("\nConsultas agendadas para a data informada:");
+
+                foreach (var consulta in consultasDoDia)
+                {
+                    Console.WriteLine($"Paciente: {consulta.Paciente.Nome}");
+                    Console.WriteLine($"Médico: {consulta.Medico.Nome}");
+                    Console.WriteLine($"Data: {consulta.DataConsulta:dd/MM/yyyy}");
+                    Console.WriteLine($"Hora: {consulta.HoraConsulta:hh\\:mm}");
+                    Console.WriteLine("---------------------------------");
+                }
+            }
+
+            return consultasDoDia;
+        }
+
+        public bool CancelarConsulta(int consultaId)
         {
             // Implementação aqui
             throw new NotImplementedException("Método ainda não implementado");

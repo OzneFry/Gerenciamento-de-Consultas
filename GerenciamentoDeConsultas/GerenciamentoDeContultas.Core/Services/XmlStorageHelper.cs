@@ -9,6 +9,9 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
     {
         public static void SalvarLista<T>(List<T> lista, string caminhoArquivo)
         {
+            var pasta = Path.GetDirectoryName(caminhoArquivo);
+            if (!string.IsNullOrEmpty(pasta) && !Directory.Exists(pasta))
+                Directory.CreateDirectory(pasta);
             var serializer = new XmlSerializer(typeof(List<T>));
             using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
             {

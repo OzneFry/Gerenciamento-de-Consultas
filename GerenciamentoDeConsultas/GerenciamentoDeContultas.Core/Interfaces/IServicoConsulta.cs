@@ -9,6 +9,8 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces
     public interface IServicoConsulta
     {
         bool AgendarConsulta(Consulta consulta);
+        List<Consulta> ListarConsultas();
+
         bool CancelarConsulta(int consultaId);
         List<Consulta> ObterConsultasPorData(DateTime data);
         List<Consulta> ObterConsultasPorMedico(int medicoId, DateTime data);

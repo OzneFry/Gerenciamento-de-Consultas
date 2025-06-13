@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Interfaces;
 using GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Models;
 
-namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
+namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
 {
     public class GerenciadorConsultas
     {
@@ -38,6 +38,16 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
             };
 
             return _servicoConsulta.AgendarConsulta(consulta);
+        }
+
+        public List<Consulta> ListarConsultas()
+        {
+            return _servicoConsulta.ListarConsultas();
+        }
+
+        public List<Consulta> ObterConsultasPorData(DateTime data)
+        {
+            return _servicoConsulta.ObterConsultasPorData(data);
         }
 
         public void ProcessarProximaConsulta()
