@@ -3,7 +3,7 @@
   
   <Consulta>
     <Id>1</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>1</Id>
       <Nome>Lucas Oliveira</Nome>
@@ -24,7 +24,7 @@
 
   <Consulta>
     <Id>2</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>2</Id>
       <Nome>Mariana Costa</Nome>
@@ -45,7 +45,7 @@
 
   <Consulta>
     <Id>3</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>3</Id>
       <Nome>Rafael Santos</Nome>
@@ -66,7 +66,7 @@
 
   <Consulta>
     <Id>4</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>4</Id>
       <Nome>Juliana Almeida</Nome>
@@ -87,7 +87,7 @@
 
   <Consulta>
     <Id>5</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>5</Id>
       <Nome>Pedro Henrique</Nome>
@@ -108,7 +108,7 @@
 
   <Consulta>
     <Id>6</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>6</Id>
       <Nome>Amanda Ribeiro</Nome>
@@ -129,7 +129,7 @@
 
   <Consulta>
     <Id>7</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>7</Id>
       <Nome>Bruno Carvalho</Nome>
@@ -150,7 +150,7 @@
 
   <Consulta>
     <Id>8</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>8</Id>
       <Nome>Carolina Dias</Nome>
@@ -171,7 +171,7 @@
 
   <Consulta>
     <Id>9</Id>
-    <PacienteId>0/PacienteId>
+    <PacienteId>0</PacienteId>
     <Paciente>
       <Id>9</Id>
       <Nome>Daniel Martins</Nome>
