@@ -95,9 +95,10 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
                 );
             }
 
+            // Se não houver consultas, apenas retorne uma lista vazia
             if (_listaConsultas.Count == 0)
             {
-                throw new InvalidOperationException("Não há consultas agendadas.");
+                return new List<Consulta>();
             }
 
             List<Consulta> consultasValidas = new List<Consulta>();

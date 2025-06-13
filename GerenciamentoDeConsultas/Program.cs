@@ -56,12 +56,13 @@ class Program
                 switch (opcao)
                 {
                     case 1: // Agendar nova consulta
+                        Console.WriteLine("--- AGENDE A CONSULTA ---\n");
                         Console.WriteLine("Digite o nome do paciente e os detalhes da consulta:");
 
                         try
                         {
                             // Cadastro rápido do paciente
-                            Console.Write("Nome do paciente: ");
+                            Console.Write("Nome completo do paciente: ");
                             string nomePaciente = Console.ReadLine();
 
                             var paciente = new Paciente
@@ -92,7 +93,7 @@ class Program
                                 new Medico
                                 {
                                     Id = 3,
-                                    Nome = "Dr. Marcos Lima",
+                                    Nome = "Dr. Marcos Oliveira",
                                     Especialidade = "Ortopedia",
                                     CRM = "98765-SP",
                                 },
@@ -115,31 +116,82 @@ class Program
                                 break;
                             }
 
-                            DateTime dataConsulta1 = LerData("Data da consulta (dd/MM/yyyy): ");
-
-                            Console.Write("Hora da consulta (HH:mm): ");
+                            DateTime dataConsulta1;
                             TimeSpan horaConsulta;
-                            while (!TimeSpan.TryParse(Console.ReadLine(), out horaConsulta))
+                            bool agendamentoConcluido = false;
+                            while (!agendamentoConcluido)
                             {
-                                Console.WriteLine("Formato inválido! Digite no formato HH:mm");
-                                Console.Write("Hora da consulta (HH:mm): ");
-                            }
+                                // Solicita data
+                                dataConsulta1 = LerData("Data da consulta (dd/MM/yyyy): ");
 
-                            bool sucesso = gerenciador.AgendarNovaConsulta(
-                                paciente,
-                                medicoSelecionado,
-                                dataConsulta1,
-                                horaConsulta
-                            );
+                                // Solicita hora e verifica disponibilidade
+                                bool horarioDisponivel = false;
+                                do
+                                {
+                                    Console.Write("Hora da consulta (HH:mm): ");
+                                    while (!TimeSpan.TryParse(Console.ReadLine(), out horaConsulta))
+                                    {
+                                        Console.WriteLine(
+                                            "Formato inválido! Digite no formato HH:mm"
+                                        );
+                                        Console.Write("Hora da consulta (HH:mm): ");
+                                    }
 
-                            if (sucesso)
-                            {
-                                Console.WriteLine("\nConsulta agendada com sucesso!");
-                                Console.WriteLine($"Paciente: {paciente.Nome}");
-                                Console.WriteLine($"Médico: {medicoSelecionado.Nome}");
-                                Console.WriteLine(
-                                    $"Data: {dataConsulta1:dd/MM/yyyy} às {horaConsulta:hh\\:mm}"
-                                );
+                                    var consultasNoMesmoHorario = gerenciador
+                                        .ListarConsultas()
+                                        .Where(c =>
+                                            c.Medico != null
+                                            && c.DataConsulta.Date == dataConsulta1.Date
+                                        )
+                                        .Any(c =>
+                                            c.Medico.Id == medicoSelecionado.Id
+                                            && c.HoraConsulta == horaConsulta
+                                        );
+
+                                    if (consultasNoMesmoHorario)
+                                    {
+                                        Console.WriteLine(
+                                            "Este médico já possui uma consulta nesse horário. Escolha outro horário!"
+                                        );
+                                    }
+                                    else
+                                    {
+                                        horarioDisponivel = true;
+                                    }
+                                } while (!horarioDisponivel);
+
+                                try
+                                {
+                                    bool sucesso = gerenciador.AgendarNovaConsulta(
+                                        paciente,
+                                        medicoSelecionado,
+                                        dataConsulta1,
+                                        horaConsulta
+                                    );
+                                    if (sucesso)
+                                    {
+                                        Console.WriteLine("\nConsulta agendada com sucesso!");
+                                        Console.WriteLine($"Paciente: {paciente.Nome}");
+                                        Console.WriteLine($"Médico: {medicoSelecionado.Nome}");
+                                        Console.WriteLine(
+                                            $"Data: {dataConsulta1:dd/MM/yyyy} às {horaConsulta:hh\\:mm}"
+                                        );
+                                        agendamentoConcluido = true;
+                                    }
+                                }
+                                catch (ArgumentException ex)
+                                    when (ex.Message.Contains("datas passadas"))
+                                {
+                                    Console.WriteLine(
+                                        "Não é possível agendar consultas para datas passadas. Escolha uma nova data!"
+                                    );
+                                    // Repete o loop para pedir nova data
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"\nErro ao agendar consulta: {ex.Message}");
+                                    break;
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -163,7 +215,7 @@ class Program
                             else
                             {
                                 Console.WriteLine(
-                                    $"Paciente: {consulta.Paciente.Nome}, Médico: {consulta.Medico.Nome}, Data: {consulta.DataConsulta:dd/MM/yyyy}, Hora: {consulta.HoraConsulta:HH:mm}"
+                                    $"Paciente: {consulta.Paciente.Nome}, Médico: {consulta.Medico.Nome}, Data: {consulta.DataConsulta:dd/MM/yyyy}, Hora: {consulta.HoraConsulta:hh\\:mm}"
                                 );
                             }
                         }
@@ -171,26 +223,11 @@ class Program
 
                     case 3: // Consultar por data
                         Console.WriteLine("--- CONSULTAS POR DATA ---");
-                        Console.Write("Digite a data (dd/MM/yyyy): ");
-                        DateTime dataConsulta2 = LerData("Data da consulta (dd/MM/yyyy): ");
+                        DateTime dataConsulta2 = LerData(
+                            "Digite a data da consulta (dd/MM/yyyy): "
+                        );
 
-                        // Obter as consultas para a data
-                        var consultasPorData = gerenciador.ObterConsultasPorData(dataConsulta2);
-
-                        if (consultasPorData.Any())
-                        {
-                            Console.WriteLine("\nConsultas agendadas para a data informada:");
-                            foreach (var consulta in consultasPorData)
-                            {
-                                Console.WriteLine(
-                                    $"Paciente: {consulta.Paciente.Nome}, Médico: {consulta.Medico.Nome}, Hora: {consulta.HoraConsulta:HH:mm}"
-                                );
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nNão há consultas agendadas para essa data.");
-                        }
+                        gerenciador.ObterConsultasPorData(dataConsulta2);
                         break;
 
                     case 4: // Consultar por médico
@@ -246,7 +283,7 @@ class Program
 
             if (opcao != 0)
             {
-                Console.WriteLine("\nPressione qualquer tecla para continuar...");
+                Console.WriteLine("\nPressione qualquer tecla para retornar ao menu principal...");
                 Console.ReadLine();
             }
         }
