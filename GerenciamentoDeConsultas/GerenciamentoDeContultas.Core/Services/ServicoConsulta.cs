@@ -103,25 +103,26 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
             List<Consulta> consultasValidas = new List<Consulta>();
 
-            foreach (var consulta in _listaConsultas)
-            {
-                // Verifique os dados da consulta, especialmente valores como hora ou data
-                if (consulta.Paciente == null || consulta.Medico == null)
-                {
-                    Console.WriteLine("Consulta com dados inválidos ignorada.");
-                }
-                else
-                {
-                    // Adicionar apenas as consultas válidas (com dados completos)
-                    consultasValidas.Add(consulta);
+            // Ordena por data e hora
+            var consultasOrdenadas = _listaConsultas
+                .Where(c => c.Paciente != null && c.Medico != null)
+                .OrderBy(c => c.DataConsulta)
+                .ThenBy(c => c.HoraConsulta)
+                .ToList();
 
-                    // Exibir somente as informações desejadas (Paciente, Médico, Data)
-                    Console.WriteLine("Informações da consulta agendada:");
-                    Console.WriteLine($"Paciente: {consulta.Paciente.Nome}");
-                    Console.WriteLine($"Médico: {consulta.Medico.Nome}");
-                    Console.WriteLine($"Data: {consulta.DataConsulta:dd/MM/yyyy}");
-                    Console.WriteLine("---------------------------------");
-                }
+            foreach (var consulta in consultasOrdenadas)
+            {
+                // Adicionar apenas as consultas válidas (com dados completos)
+                consultasValidas.Add(consulta);
+            }
+
+            // Exibir mensagem para consultas inválidas
+            var consultasInvalidas = _listaConsultas.Where(c =>
+                c.Paciente == null || c.Medico == null
+            );
+            foreach (var consulta in consultasInvalidas)
+            {
+                Console.WriteLine("Consulta com dados inválidos ignorada.");
             }
 
             return consultasValidas;
