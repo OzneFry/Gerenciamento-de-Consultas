@@ -50,6 +50,11 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
             return _servicoConsulta.ObterConsultasPorData(data);
         }
 
+        public List<Consulta> ObterConsultasPorMedico(int medicoId, DateTime data)
+        {
+            return _servicoConsulta.ObterConsultasPorMedico(medicoId, data);
+        }
+
         public void ProcessarProximaConsulta()
         {
             // Implementação aqui
@@ -58,6 +63,31 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
         public void ExibirAgendamentosDoDia(DateTime data)
         {
             // Implementação aqui
+        }
+
+        public void AdicionarPacienteNaFila(Paciente paciente)
+        {
+            _servicoPaciente.AdicionarPacienteNaFila(paciente);
+        }
+
+        public Paciente ObterProximoPaciente()
+        {
+            return _servicoPaciente.ObterProximoPaciente();
+        }
+
+        public List<Paciente> ListarPacientesOrdemAlfabetica()
+        {
+            return _servicoPaciente.ListarPacientesOrdemAlfabetica();
+        }
+
+        public string[,] ObterMatrizConsultas()
+        {
+            return _servicoConsulta.ObterMatrizConsultas();
+        }
+
+        public bool CancelarConsulta(int consultaId)
+        {
+            return _servicoConsulta.CancelarConsulta(consultaId);
         }
     }
 }

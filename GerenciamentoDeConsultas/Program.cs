@@ -59,13 +59,12 @@ class Program
             {
                 switch (opcao)
                 {
-                    case 1: // Agendar nova consulta
+                    case 1: // AGENDAR NOVA CONSULTA
                         Console.WriteLine("--- AGENDE A CONSULTA ---\n");
                         Console.WriteLine("Digite o nome do paciente e os detalhes da consulta:");
 
                         try
                         {
-                            // Cadastro rápido do paciente
                             Console.Write("Nome completo do paciente: ");
                             string? nomePaciente = Console.ReadLine();
                             if (string.IsNullOrWhiteSpace(nomePaciente))
@@ -209,12 +208,12 @@ class Program
                         }
                         break;
 
-                    case 2: // Listar todas as consultas
+                    case 2: // LISTAR TODAS AS CONSULTAS
                         Console.WriteLine("--- TODAS AS CONSULTAS AGENDADAS ---");
                         gerenciador.ListarConsultas();
                         break;
 
-                    case 3: // Consultar por data
+                    case 3: // CONSULTAS POR DATA
                         Console.WriteLine("--- CONSULTAS POR DATA ---");
                         DateTime dataConsulta2 = LerData(
                             "Digite a data da consulta (dd/MM/yyyy): "
@@ -223,12 +222,37 @@ class Program
                         gerenciador.ObterConsultasPorData(dataConsulta2);
                         break;
 
-                    case 4: // Consultar por médico
+                    case 4: // CONSULTAS POR MÉDICO
                         Console.WriteLine("--- CONSULTAS POR MÉDICO ---");
-                        // Implementar busca por médico
+                        int medicoId = LerInteiro("Digite o ID do médico: ");
+                        DateTime dataConsultaMedico = LerData(
+                            "Digite a data da consulta (dd/MM/yyyy): "
+                        );
+                        var consultasPorMedico = gerenciador.ObterConsultasPorMedico(
+                            medicoId,
+                            dataConsultaMedico
+                        );
+                        if (consultasPorMedico == null || consultasPorMedico.Count == 0)
+                        {
+                            Console.WriteLine(
+                                "Nenhuma consulta encontrada para este médico nesta data."
+                            );
+                        }
+                        else
+                        {
+                            Console.WriteLine(
+                                $"Consultas do médico {medicoId} em {dataConsultaMedico:dd/MM/yyyy}:"
+                            );
+                            foreach (var consulta in consultasPorMedico)
+                            {
+                                Console.WriteLine(
+                                    $"- Paciente: {consulta.Paciente?.Nome ?? "Desconhecido"} | Horário: {consulta.HoraConsulta.ToString(@"hh\:mm")}"
+                                );
+                            }
+                        }
                         break;
 
-                    case 5: // Adicionar paciente à fila
+                    case 5: // ADICIONAR PACIENTE À FILA
                         Console.WriteLine("--- ADICIONAR PACIENTE À FILA ---");
                         Console.Write("Nome do paciente: ");
                         string? nome = Console.ReadLine();
@@ -237,31 +261,103 @@ class Program
                             Console.WriteLine("Nome do paciente não pode ser vazio!");
                             break;
                         }
-                        // Implementar adição à fila
+                        var pacienteFila = new Paciente
+                        {
+                            Nome = nome,
+                            Email = "temp@email.com",
+                            Telefone = "000000000",
+                        };
+                        gerenciador.AdicionarPacienteNaFila(pacienteFila);
+                        Console.WriteLine(
+                            $"Paciente '{nome}' adicionado à fila de espera com sucesso!"
+                        );
                         break;
 
-                    case 6: // Chamar próximo paciente
+                    case 6: // CHAMAR PRÓXIMO PACIENTE
                         Console.WriteLine("--- CHAMAR PRÓXIMO PACIENTE ---");
-                        // Implementar chamada do próximo
+                        var proximoPaciente = gerenciador.ObterProximoPaciente();
+                        if (proximoPaciente == null)
+                        {
+                            Console.WriteLine("Nenhum paciente na fila de espera.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Próximo paciente chamado: {proximoPaciente.Nome}");
+                        }
                         break;
 
-                    case 7: // Listar pacientes em ordem alfabética
+                    case 7: // LISTAR PACIENTES EM ORDEM ALFABÉTICA
                         Console.WriteLine("--- PACIENTES (ORDEM ALFABÉTICA) ---");
-                        // Implementar listagem ordenada
+                        var pacientesOrdenados = gerenciador.ListarPacientesOrdemAlfabetica();
+                        if (pacientesOrdenados == null || pacientesOrdenados.Count == 0)
+                        {
+                            Console.WriteLine("Nenhum paciente cadastrado.");
+                        }
+                        else
+                        {
+                            foreach (var paciente in pacientesOrdenados)
+                            {
+                                Console.WriteLine($"- {paciente.Nome}");
+                            }
+                        }
                         break;
 
-                    case 8: // Visualizar matriz de consultas
+                    case 8: //VISUALIZAR MATRIZ DE CONSULTAS
                         Console.WriteLine("--- MATRIZ DE CONSULTAS ---");
-                        // Implementar exibição da matriz
+                        var matriz = gerenciador.ObterMatrizConsultas();
+                        if (matriz == null)
+                        {
+                            Console.WriteLine("Matriz de consultas não disponível.");
+                        }
+                        else
+                        {
+                            string[] dias =
+                            {
+                                "Segunda",
+                                "Terça",
+                                "Quarta",
+                                "Quinta",
+                                "Sexta",
+                                "Sábado",
+                                "Domingo",
+                            };
+                            int larguraColuna = 18;
+                            Console.Write("Horário/Dia ");
+                            foreach (var dia in dias)
+                                Console.Write($"| {dia.PadRight(larguraColuna - 2)}");
+                            Console.WriteLine("|");
+                            Console.WriteLine(new string('-', 10 + (larguraColuna + 2) * 7));
+                            for (int h = 0; h < matriz.GetLength(0); h++)
+                            {
+                                Console.Write($"{h:00}:00      ");
+                                for (int d = 0; d < matriz.GetLength(1); d++)
+                                {
+                                    string valor = matriz[h, d] ?? "-";
+                                    Console.Write($"| {valor.PadRight(larguraColuna - 2)}");
+                                }
+                                Console.WriteLine("|");
+                            }
+                            Console.WriteLine(new string('-', 10 + (larguraColuna + 2) * 7));
+                        }
                         break;
 
-                    case 9: // Cancelar consulta
+                    case 9: // CANCELAR CONSULTA
                         Console.WriteLine("--- CANCELAR CONSULTA ---");
-                        Console.Write("ID da consulta a cancelar: ");
-                        // Implementar cancelamento
+                        int idCancelar = LerInteiro("ID da consulta a cancelar: ");
+                        bool cancelada = gerenciador.CancelarConsulta(idCancelar);
+                        if (cancelada)
+                        {
+                            Console.WriteLine($"Consulta {idCancelar} cancelada com sucesso!");
+                        }
+                        else
+                        {
+                            Console.WriteLine(
+                                $"Consulta {idCancelar} não encontrada ou já foi cancelada."
+                            );
+                        }
                         break;
 
-                    case 0: // Sair do sistema
+                    case 0: // SAIR DO SISTEMA
                         executando = false;
                         Console.WriteLine("Encerrando o sistema...");
                         break;
