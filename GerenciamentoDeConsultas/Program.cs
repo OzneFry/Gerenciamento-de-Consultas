@@ -350,7 +350,7 @@ class Program
                         }
                         break;
 
-                    case 0: // SAIR DO SISTEMA
+                    case 0: // ENCERRAR SISTEMA
                         executando = false;
                         Console.WriteLine("Encerrando o sistema...");
                         break;
