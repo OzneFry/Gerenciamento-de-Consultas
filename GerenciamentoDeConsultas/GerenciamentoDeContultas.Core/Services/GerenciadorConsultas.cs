@@ -64,5 +64,30 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
         {
             // Implementação aqui
         }
+
+        public void AdicionarPacienteNaFila(Paciente paciente)
+        {
+            _servicoPaciente.AdicionarPacienteNaFila(paciente);
+        }
+
+        public Paciente ObterProximoPaciente()
+        {
+            return _servicoPaciente.ObterProximoPaciente();
+        }
+
+        public List<Paciente> ListarPacientesOrdemAlfabetica()
+        {
+            return _servicoPaciente.ListarPacientesOrdemAlfabetica();
+        }
+
+        public string[,] ObterMatrizConsultas()
+        {
+            return _servicoConsulta.ObterMatrizConsultas();
+        }
+
+        public bool CancelarConsulta(int consultaId)
+        {
+            return _servicoConsulta.CancelarConsulta(consultaId);
+        }
     }
 }

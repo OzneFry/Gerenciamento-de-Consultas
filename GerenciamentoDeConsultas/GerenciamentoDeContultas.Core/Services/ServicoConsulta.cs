@@ -48,24 +48,17 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
             consulta.Id = _listaConsultas.Count > 0 ? _listaConsultas.Max(c => c.Id) + 1 : 1;
 
             // Ajuste para garantir que a hora esteja no formato correto
-            if (consulta.HoraConsulta == null)
+            // Não é necessário checar null para TimeSpan, pois não é nullable
+            // Garantir que a hora esteja no formato HH:mm (por exemplo, 14:00)
+            TimeSpan hora;
+            string horaString = consulta.HoraConsulta.ToString();
+            if (!TimeSpan.TryParse(horaString, out hora))
             {
-                throw new ArgumentException("Hora da consulta não pode ser nula");
+                throw new ArgumentException(
+                    "Hora da consulta está em formato inválido. Utilize o formato HH:mm."
+                );
             }
-            else
-            {
-                // Garantir que a hora esteja no formato HH:mm (por exemplo, 14:00)
-                TimeSpan hora;
-                string horaString = consulta.HoraConsulta.ToString();
-                if (!TimeSpan.TryParse(horaString, out hora))
-                {
-                    throw new ArgumentException(
-                        "Hora da consulta está em formato inválido. Utilize o formato HH:mm."
-                    );
-                }
-
-                consulta.HoraConsulta = hora;
-            }
+            consulta.HoraConsulta = hora;
 
             // Adicionar consulta à lista de consultas
             _listaConsultas.Add(consulta);
@@ -158,8 +151,20 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
         public bool CancelarConsulta(int consultaId)
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            var consulta = _listaConsultas.FirstOrDefault(c => c.Id == consultaId);
+            if (consulta == null)
+                return false;
+            _listaConsultas.Remove(consulta);
+            try
+            {
+                XmlStorageHelper.SalvarLista(_listaConsultas, ArquivoConsultas);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao salvar consultas após cancelamento: {ex.Message}");
+                return false;
+            }
+            return true;
         }
 
         public List<Consulta> ObterConsultasPorMedico(int medicoId, DateTime data)
@@ -176,8 +181,19 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
         public string[,] ObterMatrizConsultas()
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            // Exemplo simples: preenche a matriz com nomes dos pacientes por horário e dia
+            // 0 = 00:00, 1 = 01:00, ..., 23 = 23:00 | 0 = segunda, ..., 6 = domingo
+            var matriz = new string[24, 7];
+            var consultas = this.ListarConsultas();
+            foreach (var consulta in consultas)
+            {
+                int hora = consulta.HoraConsulta.Hours;
+                int dia = (int)consulta.DataConsulta.DayOfWeek - 1;
+                if (dia < 0)
+                    dia = 6; // Ajusta para segunda=0, domingo=6
+                matriz[hora, dia] = consulta.Paciente?.Nome ?? "(Sem nome)";
+            }
+            return matriz;
         }
     }
 }

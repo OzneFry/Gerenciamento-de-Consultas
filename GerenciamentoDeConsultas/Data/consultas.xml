@@ -800,24 +800,4 @@
     <HoraConsulta>PT13H30M</HoraConsulta>
     <Realizada>false</Realizada>
   </Consulta>
-  <Consulta>
-    <Id>41</Id>
-    <PacienteId>0</PacienteId>
-    <Paciente>
-      <Id>1</Id>
-      <Nome>João Pedro Mota</Nome>
-      <Email>temp@email.com</Email>
-      <Telefone>000000000</Telefone>
-    </Paciente>
-    <MedicoId>0</MedicoId>
-    <Medico>
-      <Id>1</Id>
-      <Nome>Dr. Carlos Silva</Nome>
-      <Especialidade>Cardiologia</Especialidade>
-      <CRM>12345-SP</CRM>
-    </Medico>
-    <DataConsulta>2025-06-15T00:00:00</DataConsulta>
-    <HoraConsulta>PT13H30M</HoraConsulta>
-    <Realizada>false</Realizada>
-  </Consulta>
 </ArrayOfConsulta>
