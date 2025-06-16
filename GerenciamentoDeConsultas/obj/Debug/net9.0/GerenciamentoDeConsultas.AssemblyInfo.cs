@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GerenciamentoDeConsultas")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ef22d68217146196fd8bc40bae3e7bc53c4fa7d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c94a4af6af4a998a31cc07b71ee246c98eedc890")]
 [assembly: System.Reflection.AssemblyProductAttribute("GerenciamentoDeConsultas")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GerenciamentoDeConsultas")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

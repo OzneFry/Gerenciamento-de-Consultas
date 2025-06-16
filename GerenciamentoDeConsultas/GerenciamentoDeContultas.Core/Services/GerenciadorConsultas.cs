@@ -55,16 +55,6 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
             return _servicoConsulta.ObterConsultasPorMedico(medicoId, data);
         }
 
-        public void ProcessarProximaConsulta()
-        {
-            // Implementação aqui
-        }
-
-        public void ExibirAgendamentosDoDia(DateTime data)
-        {
-            // Implementação aqui
-        }
-
         public void AdicionarPacienteNaFila(Paciente paciente)
         {
             _servicoPaciente.AdicionarPacienteNaFila(paciente);

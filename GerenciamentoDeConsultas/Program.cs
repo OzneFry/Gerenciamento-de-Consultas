@@ -8,19 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 class Program
 {
-    // Criação da lista das consultas existentes
     static List<Consulta> listaConsultas = new List<Consulta>();
 
     static void Main(string[] args)
     {
-        // Garante que o console use UTF-8 para entrada e saída
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.InputEncoding = System.Text.Encoding.UTF8;
 
         Console.WriteLine("\t--- SISTEMA DE GERENCIAMENTO DE CONSULTAS MÉDICAS (SGCM) ---");
         Console.WriteLine("\nIniciando o sistema...\n");
 
-        // Configuração da injeção de dependência
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IServicoPaciente, ServicoPaciente>()
             .AddSingleton<IServicoConsulta, ServicoConsulta>()
@@ -80,7 +77,6 @@ class Program
                                 Email = "temp@email.com",
                                 Telefone = "000000000",
                             };
-                            // Simulação de busca de médicos disponíveis
                             Console.WriteLine("\nSelecione um médico para a consulta:");
                             var medicos = new List<Medico>
                             {
@@ -129,10 +125,8 @@ class Program
                             bool agendamentoConcluido = false;
                             while (!agendamentoConcluido)
                             {
-                                // Solicita data
                                 dataConsulta1 = LerData("Data da consulta (dd/MM/yyyy): ");
 
-                                // Solicita hora e verifica disponibilidade
                                 bool horarioDisponivel = false;
                                 do
                                 {
@@ -193,7 +187,6 @@ class Program
                                     Console.WriteLine(
                                         "Não é possível agendar consultas para datas passadas. Escolha uma nova data!"
                                     );
-                                    // Repete o loop para pedir nova data
                                 }
                                 catch (Exception ex)
                                 {

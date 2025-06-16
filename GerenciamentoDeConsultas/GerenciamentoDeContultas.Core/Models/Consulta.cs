@@ -15,6 +15,5 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Models
         public DateTime DataConsulta { get; set; }
         public TimeSpan HoraConsulta { get; set; }
         public bool Realizada { get; set; }
-        public string Observacoes { get; set; }
     }
 }

@@ -20,7 +20,6 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
         public void AdicionarPacienteNaFila(Paciente paciente)
         {
-            // Adiciona paciente na fila, mas não salva em XML (apenas consultas salvarão pacientes)
             _filaPacientes.Enqueue(paciente);
         }
 
@@ -33,7 +32,6 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
         public List<Paciente> ListarPacientesOrdemAlfabetica()
         {
-            // Lê todos os pacientes das consultas salvas
             var consultas = XmlStorageHelper.CarregarLista<Consulta>(ArquivoConsultas);
             return consultas
                 .Where(c => c.Paciente != null)
