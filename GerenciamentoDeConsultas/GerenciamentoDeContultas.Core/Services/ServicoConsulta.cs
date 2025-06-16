@@ -30,6 +30,10 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
             if (consulta.DataConsulta < DateTime.Today)
                 throw new ArgumentException("Não é possível agendar consultas para datas passadas");
 
+            // Padroniza nome do paciente e do médico
+            consulta.Paciente.Nome = PadronizarNome(consulta.Paciente.Nome);
+            consulta.Medico.Nome = PadronizarNome(consulta.Medico.Nome);
+
             if (
                 _listaConsultas.Any(c =>
                     c.Medico.Id == consulta.Medico.Id
@@ -68,6 +72,21 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
             }
 
             return true;
+        }
+
+        // Método auxiliar para padronizar nomes próprios
+        private string PadronizarNome(string nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                return nome;
+            var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < partes.Length; i++)
+            {
+                var parte = partes[i].ToLower();
+                if (parte.Length > 0)
+                    partes[i] = char.ToUpper(parte[0]) + parte.Substring(1);
+            }
+            return string.Join(" ", partes);
         }
 
         public List<Consulta> ListarConsultas()
