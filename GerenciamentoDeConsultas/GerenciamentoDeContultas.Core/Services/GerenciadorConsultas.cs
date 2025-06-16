@@ -50,6 +50,11 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeConsultas.Core.Services
             return _servicoConsulta.ObterConsultasPorData(data);
         }
 
+        public List<Consulta> ObterConsultasPorMedico(int medicoId, DateTime data)
+        {
+            return _servicoConsulta.ObterConsultasPorMedico(medicoId, data);
+        }
+
         public void ProcessarProximaConsulta()
         {
             // Implementação aqui

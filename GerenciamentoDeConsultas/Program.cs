@@ -225,7 +225,32 @@ class Program
 
                     case 4: // Consultar por médico
                         Console.WriteLine("--- CONSULTAS POR MÉDICO ---");
-                        // Implementar busca por médico
+                        int medicoId = LerInteiro("Digite o ID do médico: ");
+                        DateTime dataConsultaMedico = LerData(
+                            "Digite a data da consulta (dd/MM/yyyy): "
+                        );
+                        var consultasPorMedico = gerenciador.ObterConsultasPorMedico(
+                            medicoId,
+                            dataConsultaMedico
+                        );
+                        if (consultasPorMedico == null || consultasPorMedico.Count == 0)
+                        {
+                            Console.WriteLine(
+                                "Nenhuma consulta encontrada para este médico nesta data."
+                            );
+                        }
+                        else
+                        {
+                            Console.WriteLine(
+                                $"Consultas do médico {medicoId} em {dataConsultaMedico:dd/MM/yyyy}:"
+                            );
+                            foreach (var consulta in consultasPorMedico)
+                            {
+                                Console.WriteLine(
+                                    $"- Paciente: {consulta.Paciente?.Nome ?? "Desconhecido"} | Horário: {consulta.HoraConsulta.ToString(@"hh\:mm")}"
+                                );
+                            }
+                        }
                         break;
 
                     case 5: // Adicionar paciente à fila

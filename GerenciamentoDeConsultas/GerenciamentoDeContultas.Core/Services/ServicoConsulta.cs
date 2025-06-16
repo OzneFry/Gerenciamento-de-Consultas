@@ -164,8 +164,14 @@ namespace GerenciamentoDeConsultas.GerenciamentoDeContultas.Core.Services
 
         public List<Consulta> ObterConsultasPorMedico(int medicoId, DateTime data)
         {
-            // Implementação aqui
-            throw new NotImplementedException("Método ainda não implementado");
+            // Filtra as consultas pelo médico e pela data
+            var consultas = _listaConsultas
+                .Where(c =>
+                    c.Medico != null && c.Medico.Id == medicoId && c.DataConsulta.Date == data.Date
+                )
+                .OrderBy(c => c.HoraConsulta)
+                .ToList();
+            return consultas;
         }
 
         public string[,] ObterMatrizConsultas()
